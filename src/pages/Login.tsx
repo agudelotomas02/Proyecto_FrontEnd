@@ -9,17 +9,19 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const { user } = useAuth();
 
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await login(email, password);
-    if (success && user?.role === 'cliente') {
-        navigate('/productos');
-    } else if (success && user?.role === 'pos') {
-    navigate('/pos/restaurantes');
-    }
-    else {
+    const loggedUser = await login(email, password);
+    
+    if (!loggedUser) {
       alert('Credenciales inválidas');
+      return;
+    }
+
+    if (loggedUser.role === 'cliente') {
+      navigate('/productos');
+    } else if (loggedUser.role === 'pos') {
+      navigate('/pos/restaurantes');
     }
   };
 
