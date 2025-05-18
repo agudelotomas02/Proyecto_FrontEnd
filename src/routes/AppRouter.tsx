@@ -10,6 +10,7 @@ const AppRouter = () => (
       <Route path="/productos" element={<Productos />} />
       <Route path="/pos/restaurantes" element={<PosRestaurantes />} />
       <Route path="/pos/:restaurante/inventario" element={<div>Inventario (próximamente)</div>} />
+
     </Routes>
   </BrowserRouter>
 );
