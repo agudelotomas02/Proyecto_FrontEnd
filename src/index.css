@@ -253,3 +253,68 @@ body {
 .cart-item-qty {
   margin-top: 0.5rem;
 }
+
+/* Ajuste del campo editable de precio en Update */
+.price-display.editable {
+  width: 100px;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+/* Contenedor de los botones Confirmar y Eliminar */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Color de botones individuales */
+.action-buttons .confirm {
+  background-color: green;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.action-buttons .delete {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Card especial para nuevo producto */
+.new-product-card {
+  width: 300px;
+  background: #f0f0f0;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.create-button {
+  margin-top: 1rem;
+  background-color: #0000aa;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+}
+.input-field {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+

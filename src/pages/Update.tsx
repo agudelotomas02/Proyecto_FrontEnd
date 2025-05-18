@@ -16,8 +16,8 @@ const Update = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [priceUpdates, setPriceUpdates] = useState<Record<string, number>>({});
   const [stockChanges, setStockChanges] = useState<Record<string, number>>({});
+  const [filter, setFilter] = useState('');
 
-  // Form state for new product
   const [newProduct, setNewProduct] = useState({
     id: '',
     name: '',
@@ -74,19 +74,17 @@ const Update = () => {
       }),
     });
 
-    alert('Product updated');
+    alert('Producto actualizado');
     setPriceUpdates(prev => {
-        const newState = { ...prev };
-        delete newState[id];
-        return newState;
+      const newState = { ...prev };
+      delete newState[id];
+      return newState;
     });
-
     setStockChanges(prev => {
-        const newState = { ...prev };
-        delete newState[id];
-        return newState;
+      const newState = { ...prev };
+      delete newState[id];
+      return newState;
     });
-
     fetchProducts();
   };
 
@@ -94,14 +92,13 @@ const Update = () => {
     await fetch(`https://proyecto-backend-zeta.vercel.app/api/inventory/${restaurante}/${id}`, {
       method: 'DELETE',
     });
-
-    alert('Product deleted');
+    alert('Producto eliminado');
     fetchProducts();
   };
 
   const handleCreateProduct = async () => {
     const { name, price, stock, category } = newProduct;
-    const id = Date.now().toString(); // simple unique ID
+    const id = Date.now().toString();
     await fetch(`https://proyecto-backend-zeta.vercel.app/api/inventory/${restaurante}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -114,75 +111,115 @@ const Update = () => {
       }),
     });
 
-    alert('Product created');
+    alert('Producto creado');
     setNewProduct({ id: '', name: '', price: '', stock: '', category: '' });
     fetchProducts();
   };
 
+  const filteredProducts = products.filter(p =>
+    p.name.toLowerCase().includes(filter.toLowerCase())
+  );
+
   return (
-    <div>
-      <div>
+    <div className="inventory-page">
+      {/* Header superior */}
+      <div className="inventory-header">
         <button onClick={() => navigate(-1)}>←</button>
         <h2>{restaurante}</h2>
-        <button onClick={() => alert('Logout')}>⏻</button>
+        <button
+          title="Cerrar sesión"
+          onClick={() => navigate('/login')}
+          style={{
+            fontSize: '1.5rem',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          🚪
+        </button>
       </div>
 
-      {/* Navigation */}
-      <div>
-        <button onClick={() => navigate(`/pos/${restaurante}/inventario`)}>Inventory</button>
-        <button onClick={() => navigate(`/pos/${restaurante}/update`)}>Update</button>
-        <button onClick={() => navigate(`/pos/${restaurante}/orders`)}>Orders</button>
+      {/* Barra de navegación */}
+      <div className="inventory-controls">
+        <button onClick={() => navigate(`/pos/${restaurante}/inventario`)}>Inventario</button>
+        <button className="active">Actualizar</button>
+        <button onClick={() => navigate(`/pos/${restaurante}/orders`)}>Pedidos</button>
+        <input
+          placeholder="Buscar producto..."
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+        />
       </div>
 
-      {/* Products */}
-      <div>
-        <h3>Products</h3>
-        {products.map(p => (
-          <div key={p.id}>
-            <strong>{p.name}</strong> (ID: {p.id})
-            <div>
-              Stock: {p.stock} ➕ {stockChanges[p.id] || 0}
-              <button onClick={() => handleStockDelta(p.id, -1)}>-</button>
-              <button onClick={() => handleStockDelta(p.id, 1)}>+</button>
+      {/* Productos + Nuevo producto */}
+      <div className="inventory-body">
+        {/* Lista de productos */}
+        <div className="products-grid">
+          {filteredProducts.map(p => (
+            <div key={p.id} className="product-card">
+              <div className="product-header">
+                <span className="product-name">{p.name}</span>
+                <span className="product-id">#{p.id}</span>
+              </div>
+
+              <div className="stock-row">
+                <div className="stock-box">
+                  <div className="label">📦</div>
+                  <div className="value">{p.stock}</div>
+                </div>
+                <div className="quantity-selector">
+                  <button className="decrease" onClick={() => handleStockDelta(p.id, -1)}>-</button>
+                  <span>{stockChanges[p.id] || 0}</span>
+                  <button className="increase" onClick={() => handleStockDelta(p.id, 1)}>+</button>
+                </div>
+              </div>
+
+              <div className="card-footer">
+                <input
+                  className="price-display editable"
+                  type="number"
+                  value={priceUpdates[p.id] ?? p.price}
+                  onChange={(e) => handlePriceChange(p.id, e.target.value)}
+                />
+                <div className="action-buttons">
+                  <button className="confirm" onClick={() => handleUpdate(p.id)}>✅</button>
+                  <button className="delete" onClick={() => handleDelete(p.id)}>🗑️</button>
+                </div>
+              </div>
             </div>
-            <div>
-              Price:
-              <input
-                type="number"
-                value={priceUpdates[p.id] ?? p.price}
-                onChange={(e) => handlePriceChange(p.id, e.target.value)}
-              />
-            </div>
-            <button onClick={() => handleUpdate(p.id)}>✅ Confirm</button>
-            <button onClick={() => handleDelete(p.id)}>🗑️ Delete</button>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      {/* New Product Form */}
-      <div>
-        <h3>New product</h3>
-        <input
-          placeholder="Name"
-          value={newProduct.name}
-          onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-        />
-        <input
-          placeholder="Price"
-          value={newProduct.price}
-          onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-        />
-        <input
-          placeholder="Stock"
-          value={newProduct.stock}
-          onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })}
-        />
-        <input
-          placeholder="Category"
-          value={newProduct.category}
-          onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-        />
-        <button onClick={handleCreateProduct}>Create</button>
+        {/* Panel lateral: nuevo producto */}
+        <div className="cart-sidebar">
+          <h3>Nuevo producto</h3>
+          <input
+            className="input-field"
+            placeholder="Nombre"
+            value={newProduct.name}
+            onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+          />
+          <input
+            className="input-field"
+            placeholder="Precio"
+            value={newProduct.price}
+            onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+          />
+          <input
+            className="input-field"
+            placeholder="Stock"
+            value={newProduct.stock}
+            onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })}
+          />
+          <input
+            className="input-field"
+            placeholder="Categoría"
+            value={newProduct.category}
+            onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+          />
+          <button className="create-button" onClick={handleCreateProduct}>➕ Crear</button>
+        </div>
       </div>
     </div>
   );
