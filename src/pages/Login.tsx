@@ -26,13 +26,19 @@ const handleLogin = async (e: React.FormEvent) => {
 };
 
   return (
-    <form onSubmit={handleLogin}>
-      <h2>Login</h2>
-      <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Correo" />
-      <input value={password} type="password" onChange={(e) => setPassword(e.target.value)} placeholder="Contraseña" />
-      <button type="submit">Iniciar sesión</button>
-    </form>
+    <div className="login-container">
+      <form className="login-card" onSubmit={handleLogin}>
+        <div className="login-icon">🏪</div>
+        <h2>Iniciar sesión</h2>
+        <label className="login-label">Usuario:</label>
+        <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Correo" />
+        <label className="login-label">Contraseña:</label>
+        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Contraseña" />
+        <button type="submit">Entrar</button>
+      </form>
+    </div>
   );
+
 };
 
 export default Login;

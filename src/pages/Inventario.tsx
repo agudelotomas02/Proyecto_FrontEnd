@@ -21,18 +21,17 @@ const Inventory = () => {
     fetchProducts();
   }, [restaurante]);
 
-const fetchProducts = async () => {
-  const res = await fetch(`https://proyecto-backend-zeta.vercel.app/api/inventory/${restaurante}`);
-  const data = await res.json();
+  const fetchProducts = async () => {
+    const res = await fetch(`https://proyecto-backend-zeta.vercel.app/api/inventory/${restaurante}`);
+    const data = await res.json();
 
-  const productosTransformados = Object.entries(data).map(([id, prod]) => ({
-    id,
-    ...(prod as Omit<Product, 'id'>),
-  }));
+    const productosTransformados = Object.entries(data).map(([id, prod]) => ({
+      id,
+      ...(prod as Omit<Product, 'id'>),
+    }));
 
-  setProducts(productosTransformados);
-};
-
+    setProducts(productosTransformados);
+  };
 
   const handleQuantityChange = (id: string, delta: number) => {
     setSelectedQuantities(prev => ({
@@ -84,17 +83,28 @@ const fetchProducts = async () => {
   }, 0);
 
   return (
-    <div style={{ padding: '1rem' }}>
-      {/* Barra superior */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="inventory-page">
+      {/* Header superior */}
+      <div className="inventory-header">
         <button onClick={() => navigate(-1)}>←</button>
         <h2>{restaurante}</h2>
-        <button onClick={() => alert('Cerrar sesión')}>⏻</button>
+        <button
+          title="Cerrar sesión"
+          onClick={() => navigate('/login')}
+          style={{
+            fontSize: '1.5rem',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          🚪
+        </button>
       </div>
 
-      {/* Navegación */}
-      <div style={{ display: 'flex', gap: '1rem', margin: '1rem 0' }}>
-        <button onClick={() => navigate(`/pos/${restaurante}/inventario`)}>Inventario</button>
+      {/* Barra de navegación */}
+      <div className="inventory-controls">
+        <button className="active">Inventario</button>
         <button onClick={() => navigate(`/pos/${restaurante}/update`)}>Actualizar</button>
         <button onClick={() => navigate(`/pos/${restaurante}/orders`)}>Pedidos</button>
         <input
@@ -104,48 +114,63 @@ const fetchProducts = async () => {
         />
       </div>
 
-      <div style={{ display: 'flex' }}>
-        {/* Listado de productos */}
-        <div style={{ flex: 3, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+      <div className="inventory-body">
+        {/* Grid de productos */}
+        <div className="products-grid">
           {filteredProducts.map(p => (
-            <div key={p.id} style={{ border: '1px solid #ccc', padding: '1rem' }}>
-              <div style={{ fontWeight: 'bold' }}>{p.name}</div>
-              <div>ID: {p.id}</div>
-              <div>Stock: {p.stock}</div>
-              <div>Precio: ${p.price.toLocaleString()}</div>
-
-              <div style={{ display: 'flex', alignItems: 'center', marginTop: '0.5rem' }}>
-                <button onClick={() => handleQuantityChange(p.id, -1)}>-</button>
-                <span style={{ margin: '0 1rem' }}>{selectedQuantities[p.id] || 0}</span>
-                <button onClick={() => handleQuantityChange(p.id, 1)}>+</button>
+            <div key={p.id} className="product-card">
+              <div className="product-header">
+                <span className="product-name">{p.name}</span>
+                <span className="product-id">#{p.id}</span>
               </div>
 
-              <button style={{ marginTop: '0.5rem' }} onClick={() => handleAddToCart(p.id)}>
-                🛒 Añadir al carrito
-              </button>
+              <div className="stock-row">
+                <div className="stock-box">
+                  <div className="label">📦</div>
+                  <div className="value">{p.stock}</div>
+                </div>
+                <div className="quantity-selector">
+                  <button className="decrease" onClick={() => handleQuantityChange(p.id, -1)}>-</button>
+                  <span>{selectedQuantities[p.id] || 0}</span>
+                  <button className="increase" onClick={() => handleQuantityChange(p.id, 1)}>+</button>
+                </div>
+              </div>
+
+              <div className="card-footer">
+                <div className="price-box">${p.price.toLocaleString()}</div>
+                <button className="cart-button" onClick={() => handleAddToCart(p.id)}>🛒</button>
+              </div>
             </div>
           ))}
         </div>
 
         {/* Carrito */}
-        <div style={{ flex: 1, marginLeft: '2rem' }}>
+        <div className="cart-sidebar">
           <h3>Carrito</h3>
           {Object.keys(cart).length === 0 ? (
             <p>No hay productos</p>
           ) : (
             <>
-              <ul>
+              <div className="cart-items">
                 {Object.entries(cart).map(([id, qty]) => {
                   const product = products.find(p => p.id === id);
                   return product ? (
-                    <li key={id} style={{ marginBottom: '0.5rem' }}>
-                      {product.name} x{qty}
-                    </li>
+                    <div key={id} className="cart-item-card">
+                      <div className="cart-item-header">
+                        <span>{product.name}</span>
+                        <button onClick={() => {
+                          const updatedCart = { ...cart };
+                          delete updatedCart[id];
+                          setCart(updatedCart);
+                        }}>❌</button>
+                      </div>
+                      <div className="cart-item-qty">Cantidad: {qty}</div>
+                    </div>
                   ) : null;
                 })}
-              </ul>
+              </div>
               <p><strong>Total:</strong> ${total.toLocaleString()}</p>
-              <button onClick={handleSell}>Vender</button>
+              <button className="cart-button full" onClick={handleSell}>Vender</button>
             </>
           )}
         </div>

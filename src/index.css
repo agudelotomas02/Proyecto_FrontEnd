@@ -1,0 +1,255 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #ffffff;
+  color: #000;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #0000aa; /* azul fondo */
+}
+
+.login-card {
+  background: #e4e4e4;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 300px;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.login-card input {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none;
+}
+
+.login-card button {
+  background-color: #0000aa;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.login-card button:hover {
+  background-color: #000088;
+}
+
+.login-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.login-label {
+  display: block;
+  text-align: left;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+
+/* estilos reutilizables originales de inventory, tener presenteeee*/
+
+.inventory-page {
+  padding: 1rem;
+}
+
+.inventory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0000aa;
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.inventory-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.inventory-controls button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  background-color: #ccc;
+  cursor: pointer;
+}
+
+.inventory-controls button.active {
+  background-color: #0000aa;
+  color: white;
+}
+
+.inventory-controls input {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.inventory-body {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.products-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  flex: 3;
+}
+
+.product-card {
+  background: #e4e4e4;
+  border-radius: 10px;
+  padding: 1rem;
+  width: 260px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.product-name {
+  color: #0000aa;
+}
+
+.stock-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.stock-box {
+  display: flex;
+  width: 100px;
+  height: 40px;
+  border-radius: 6px;
+  overflow: hidden;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.stock-box .label {
+  flex: 1;
+  background-color: #0000aa;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stock-box .value {
+  flex: 1;
+  background-color: white;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.quantity-selector {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 1.2rem;
+}
+
+.quantity-selector button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: white;
+  cursor: pointer;
+}
+
+.quantity-selector .decrease {
+  background-color: red;
+}
+
+.quantity-selector .increase {
+  background-color: green;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price-box {
+  background: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.cart-button {
+  background-color: green;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cart-button.full {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.cart-sidebar {
+  flex: 1;
+  background: #f5f5f5;
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cart-item-card {
+  background: white;
+  padding: 0.75rem;
+  border-radius: 8px;
+  box-shadow: 0 0 3px rgba(0,0,0,0.1);
+}
+
+.cart-item-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.cart-item-qty {
+  margin-top: 0.5rem;
+}
