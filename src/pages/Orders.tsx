@@ -23,61 +23,52 @@ const Orders = () => {
     const res = await fetch(`https://proyecto-backend-zeta.vercel.app/api/orders/restaurante/${restaurante}`);
     const data = await res.json();
 
-
-    //AQUI LA EMBARRÉ Y TOCA TRADUCIR POR NO PRGRAMAR EN INGLES
-//_____________________________________________________________________
-    const formatted = Object.entries(data).map(([id, value]) => {
-    const estado = (value as any).estado;
-    let status: Order['status'];
-
-    switch (estado) {
-        case 'creado':
-        status = 'created';
-        break;
-        case 'preparando':
-        status = 'preparing';
-        break;
-        case 'listo':
-        status = 'ready';
-        break;
-        default:
-        status = 'created';
+    if (!res.ok || !data || typeof data !== 'object' || 'mensaje' in data) {
+      setOrders([]);
+      return;
     }
 
-//_______________________________________________________________________
+    const formatted = Object.entries(data).map(([id, value]) => {
+      const estado = (value as any).estado;
+      let status: Order['status'];
 
-  return { id, status };
-});
+      switch (estado) {
+        case 'creado':
+          status = 'created';
+          break;
+        case 'preparando':
+          status = 'preparing';
+          break;
+        case 'listo':
+          status = 'ready';
+          break;
+        default:
+          status = 'created';
+      }
+
+      return { id, status };
+    });
 
     setOrders(formatted);
   };
 
-const changeStatus = async (id: string, newStatus: Order['status']) => {
-  // Traducción al formato esperado por el backend, La volvi a embarrar por la traducción
-  let estadoTraducido;
-  switch (newStatus) {
-    case 'created':
-      estadoTraducido = 'creado';
-      break;
-    case 'preparing':
-      estadoTraducido = 'preparando';
-      break;
-    case 'ready':
-      estadoTraducido = 'listo';
-      break;
-    default:
-      return; // evita hacer fetch con estado inválido
-  }
+  const changeStatus = async (id: string, newStatus: Order['status']) => {
+    let estadoTraducido;
+    switch (newStatus) {
+      case 'created': estadoTraducido = 'creado'; break;
+      case 'preparing': estadoTraducido = 'preparando'; break;
+      case 'ready': estadoTraducido = 'listo'; break;
+      default: return;
+    }
 
-  await fetch(`https://proyecto-backend-zeta.vercel.app/api/orders/${restaurante}/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ estado: estadoTraducido })
-  });
+    await fetch(`https://proyecto-backend-zeta.vercel.app/api/orders/${restaurante}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ estado: estadoTraducido })
+    });
 
-  fetchOrders();
-};
-
+    fetchOrders();
+  };
 
   const filteredOrders = search.trim()
     ? orders.filter(o => o.id.includes(search.trim()))
@@ -88,49 +79,79 @@ const changeStatus = async (id: string, newStatus: Order['status']) => {
   const readyOrders = filteredOrders.filter(o => o.status === 'ready');
 
   return (
-    <div style={{ padding: '1rem' }}>
-      {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+    <div className="inventory-page">
+      {/* Header superior */}
+      <div className="inventory-header">
         <button onClick={() => navigate(-1)}>←</button>
         <h2>{restaurante}</h2>
-        <button onClick={() => alert('Logout')}>⏻</button>
+        <button
+          title="Cerrar sesión"
+          onClick={() => navigate('/login')}
+          style={{
+            fontSize: '1.5rem',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          🚪
+        </button>
       </div>
 
-      {/* Navigation bar and search */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', margin: '1rem 0' }}>
-        <button onClick={() => navigate(`/pos/${restaurante}/inventario`)}>Inventory</button>
-        <button onClick={() => navigate(`/pos/${restaurante}/update`)}>Update</button>
-        <button disabled>Orders</button>
+      {/* Barra de navegación */}
+      <div className="inventory-controls">
+        <button onClick={() => navigate(`/pos/${restaurante}/inventario`)}>Inventario</button>
+        <button onClick={() => navigate(`/pos/${restaurante}/update`)}>Actualizar</button>
+        <button className="active">Pedidos</button>
         <input
-          type="text"
-          placeholder="Search by order number..."
+          placeholder="Buscar pedido..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      {/* Orders layout */}
+      {/* Secciones de pedidos */}
       <div style={{ display: 'flex', gap: '2rem' }}>
-        {/* Created */}
-        <div style={{ flex: 1 }}>
-          <h3>Created</h3>
-          <ul>
-            {createdOrders.map(o => (
-              <li
-                key={o.id}
-                onClick={() => setSelectedCreated(o.id)}
-                style={{
-                  backgroundColor: selectedCreated === o.id ? 'blue' : 'white',
-                  color: selectedCreated === o.id ? 'white' : 'black',
-                  padding: '0.5rem',
-                  marginBottom: '0.5rem',
-                  cursor: 'pointer'
-                }}
-              >
-                {o.id}
-              </li>
-            ))}
-          </ul>
+        {/* Creados */}
+        <div style={{
+          flex: 1,
+          backgroundColor: '#dcdcdc',
+          borderRadius: '12px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: '0.5rem'
+        }}>
+          <div>
+            <div style={{
+              backgroundColor: '#0000aa',
+              color: 'white',
+              borderRadius: '12px 12px 0 0',
+              padding: '0.5rem',
+              textAlign: 'center',
+              fontWeight: 'bold'
+            }}>Creados</div>
+            <ul style={{ padding: 0, marginTop: '0.5rem', listStyle: 'none' }}>
+              {createdOrders.map(o => (
+                <li
+                  key={o.id}
+                  onClick={() => setSelectedCreated(o.id)}
+                  style={{
+                    backgroundColor: selectedCreated === o.id ? '#0000aa' : 'white',
+                    color: selectedCreated === o.id ? 'white' : 'black',
+                    padding: '0.5rem',
+                    marginBottom: '0.5rem',
+                    cursor: 'pointer',
+                    borderRadius: '8px',
+                    fontWeight: 'bold',
+                    textAlign: 'center'
+                  }}
+                >
+                  {o.id}
+                </li>
+              ))}
+            </ul>
+          </div>
           <button
             disabled={!selectedCreated}
             onClick={() => {
@@ -139,31 +160,62 @@ const changeStatus = async (id: string, newStatus: Order['status']) => {
                 setSelectedCreated(null);
               }
             }}
+            style={{
+              backgroundColor: selectedCreated ? '#00ff66' : '#ccc',
+              color: 'white',
+              border: 'none',
+              padding: '0.75rem',
+              borderRadius: '10px',
+              fontWeight: 'bold',
+              fontSize: '1rem',
+              cursor: selectedCreated ? 'pointer' : 'default',
+              marginTop: 'auto'
+            }}
           >
-            Prepare
+            Preparar
           </button>
         </div>
 
-        {/* Preparing */}
-        <div style={{ flex: 1 }}>
-          <h3>Preparing</h3>
-          <ul>
-            {preparingOrders.map(o => (
-              <li
-                key={o.id}
-                onClick={() => setSelectedPreparing(o.id)}
-                style={{
-                  backgroundColor: selectedPreparing === o.id ? 'blue' : 'white',
-                  color: selectedPreparing === o.id ? 'white' : 'black',
-                  padding: '0.5rem',
-                  marginBottom: '0.5rem',
-                  cursor: 'pointer'
-                }}
-              >
-                {o.id}
-              </li>
-            ))}
-          </ul>
+        {/* Preparando */}
+        <div style={{
+          flex: 1,
+          backgroundColor: '#dcdcdc',
+          borderRadius: '12px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: '0.5rem'
+        }}>
+          <div>
+            <div style={{
+              backgroundColor: '#0000aa',
+              color: 'white',
+              borderRadius: '12px 12px 0 0',
+              padding: '0.5rem',
+              textAlign: 'center',
+              fontWeight: 'bold'
+            }}>Preparando</div>
+            <ul style={{ padding: 0, marginTop: '0.5rem', listStyle: 'none' }}>
+              {preparingOrders.map(o => (
+                <li
+                  key={o.id}
+                  onClick={() => setSelectedPreparing(o.id)}
+                  style={{
+                    backgroundColor: selectedPreparing === o.id ? '#0000aa' : 'white',
+                    color: selectedPreparing === o.id ? 'white' : 'black',
+                    padding: '0.5rem',
+                    marginBottom: '0.5rem',
+                    cursor: 'pointer',
+                    borderRadius: '8px',
+                    fontWeight: 'bold',
+                    textAlign: 'center'
+                  }}
+                >
+                  {o.id}
+                </li>
+              ))}
+            </ul>
+          </div>
           <button
             disabled={!selectedPreparing}
             onClick={() => {
@@ -172,22 +224,48 @@ const changeStatus = async (id: string, newStatus: Order['status']) => {
                 setSelectedPreparing(null);
               }
             }}
+            style={{
+              backgroundColor: selectedPreparing ? '#999' : '#ccc',
+              color: 'white',
+              border: 'none',
+              padding: '0.75rem',
+              borderRadius: '10px',
+              fontWeight: 'bold',
+              fontSize: '1rem',
+              cursor: selectedPreparing ? 'pointer' : 'default',
+              marginTop: 'auto'
+            }}
           >
-            Finish
+            Terminar
           </button>
         </div>
 
-        {/* Ready */}
-        <div style={{ flex: 1 }}>
-          <h3>Ready</h3>
-          <ul>
+        {/* Listos */}
+        <div style={{
+          flex: 1,
+          backgroundColor: '#dcdcdc',
+          borderRadius: '12px',
+          padding: '0.5rem'
+        }}>
+          <div style={{
+            backgroundColor: '#0000aa',
+            color: 'white',
+            borderRadius: '12px 12px 0 0',
+            padding: '0.5rem',
+            textAlign: 'center',
+            fontWeight: 'bold'
+          }}>Listos</div>
+          <ul style={{ padding: 0, marginTop: '0.5rem', listStyle: 'none' }}>
             {readyOrders.map(o => (
               <li
                 key={o.id}
                 style={{
                   backgroundColor: 'white',
                   padding: '0.5rem',
-                  marginBottom: '0.5rem'
+                  marginBottom: '0.5rem',
+                  borderRadius: '8px',
+                  fontWeight: 'bold',
+                  textAlign: 'center'
                 }}
               >
                 {o.id}

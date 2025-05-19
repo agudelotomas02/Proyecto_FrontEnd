@@ -1,5 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../PosRestaurantes.css';
+
+const imageMap: Record<string, string> = {
+  embarcadero: '/images/embarcadero.jpeg',
+  meson: '/images/meson.jpeg',
+  banderitas: '/images/meson-banderitas.jpg',
+  arcos: '/images/arcos.jpeg',
+  terrazaLiving: '/images/terraza-living.jpg',
+  cafeBolsa: '/images/cafe-bolsa.jpg',
+  restauranteEscuela: '/images/escuela.jpg',
+  terrazaEscuela: '/images/escuela-terraza.jpg',
+  puntoWok: '/images/wok.png',
+  puntoCrepes: '/images/punto-crepes.jpg',
+  puntoSandwich: '/images/sandwich.jpg',
+  embarcaderoCarta: '/images/embarcadero-carta.jpg',
+};
 
 const PosRestaurantes = () => {
   const navigate = useNavigate();
@@ -24,25 +40,34 @@ const PosRestaurantes = () => {
   };
 
   return (
-    <div>
-      <h2>Selecciona un restaurante</h2>
-      <ul>
-        {restaurantes.map((r) => (
-          <li key={r}>
-            <button onClick={() => seleccionar(r)}>{formatearNombre(r)}</button>
-          </li>
+    <div className="restaurantes-page">
+      <div className="top-header">
+        <h2>Puntos de venta</h2>
+        <button className="logout-button" onClick={() => navigate('/login')}>🚪</button>
+      </div>
+      <div className="restaurantes-grid">
+        {restaurantes.map((id) => (
+          <div className="restaurante-card" key={id} onClick={() => seleccionar(id)}>
+            <div className="image-section">
+              <img
+                src={imageMap[id] || '/images/default.jpg'}
+                alt={id}
+              />
+            </div>
+            <div className="name-section">{formatearNombre(id)}</div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
 
-// Opcional: función para mostrar nombres más bonitos
 function formatearNombre(id: string) {
   return id
-    .replace(/([A-Z])/g, ' $1')   // puntoSandwich → punto Sandwich
-    .replace(/^./, (c) => c.toUpperCase()) // primera en mayúscula
-    .replace(/([A-Z][a-z]+)/g, (w) => w[0].toUpperCase() + w.slice(1)); // mejor capitalización
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, (c) => c.toUpperCase())
+    .replace(/([A-Z][a-z]+)/g, (w) => w[0].toUpperCase() + w.slice(1))
+    .trim();
 }
 
 export default PosRestaurantes;
