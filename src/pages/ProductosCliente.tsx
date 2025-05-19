@@ -42,8 +42,6 @@ const ProductosCliente = () => {
   const [errorRestaurante, setErrorRestaurante] = useState(false);
 
   useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
     const fetchProducts = async () => {
       const rawId = restauranteId?.toLowerCase();
       const realRestauranteId = rawId ? RESTAURANTE_MAP[rawId] || rawId : '';
@@ -81,10 +79,7 @@ const ProductosCliente = () => {
 
     if (restauranteId) {
       fetchProducts();
-      intervalId = setInterval(fetchProducts, 5000);
     }
-
-    return () => clearInterval(intervalId);
   }, [restauranteId]);
 
   const handleQuantityChange = (id: string, delta: number) => {
@@ -130,7 +125,6 @@ const ProductosCliente = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Error al registrar el pedido');
 
-      // ✅ Descontar stock localmente
       setProducts(prev =>
         prev.map(p => ({
           ...p,
