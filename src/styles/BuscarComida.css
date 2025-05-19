@@ -1,0 +1,97 @@
+
+.buscar-container {
+  padding: 1rem;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+.buscar-titulo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #0f172a;
+}
+
+.buscar-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #cbd5e1;
+  border-radius: 0.5rem;
+  outline: none;
+  transition: 0.3s;
+  margin-bottom: 1.5rem;
+}
+
+.buscar-input:focus {
+  border-color: #0f172a;
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.2);
+}
+
+.buscar-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.producto-card {
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-left: 6px solid #0f172a;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.producto-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.2);
+  background-color: #e8f0ff;
+}
+
+.producto-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+  font-weight: bold;
+  color: #0f172a;
+}
+
+.producto-card p {
+  margin: 0.25rem 0;
+  font-size: 0.95rem;
+}
+
+.producto-card strong {
+  color: #0f172a;
+}
+
+.buscar-cargando,
+.buscar-vacio {
+  font-style: italic;
+  color: #64748b;
+}
+.btn-volver {
+  display: inline-block;
+  background-color: #0f172a;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.15);
+}
+
+.btn-volver:hover {
+  background-color: #1e293b;
+  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.25);
+}
+

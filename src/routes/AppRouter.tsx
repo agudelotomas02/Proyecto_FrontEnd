@@ -6,7 +6,8 @@ import Update from '../pages/Update';
 import Orders from '../pages/Orders';
 import RestaurantesCliente from '../pages/RestaurantesCliente'; // <- este es nuevo
 import ProductosCliente from '../pages/ProductosCliente';
-
+import PedidosCliente from '../pages/PedidosCliente';
+import BuscarComida from '../pages/BuscarComida';
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -18,6 +19,8 @@ const AppRouter = () => (
       <Route path="/pos/:restaurante/update" element={<Update />} />
       <Route path="/pos/:restaurante/orders" element={<Orders />} />
       <Route path="/cliente/restaurantes/:restauranteId/productos" element={<ProductosCliente />} />
+      <Route path="/cliente/pedidos" element={<PedidosCliente />} />
+      <Route path="/cliente/buscar" element={<BuscarComida />} />
 
     </Routes>
   </BrowserRouter>

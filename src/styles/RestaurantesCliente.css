@@ -1,0 +1,125 @@
+/* Contenedor principal */
+.contenedor {
+  padding: 16px;
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+/* Encabezado superior */
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+/* Fondo azul institucional */
+.azul-institucional {
+  background-color: #001f5b; /* Azul institucional */
+  color: white;
+  padding: 16px;
+  border-radius: 0 0 12px 12px;
+}
+
+/* Título principal */
+.titulo {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Centrado del título */
+.centrado {
+  text-align: center;
+  width: 100%;
+  margin: 0;
+}
+
+/* Contenedor del menú */
+.menu-contenedor {
+  position: relative;
+}
+
+/* Botón de hamburguesa */
+.boton-menu {
+  padding: 6px 12px;
+  background-color: #d1d5db;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.boton-menu:hover {
+  background-color: #9ca3af;
+}
+
+/* Menú desplegable */
+.menu-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  width: 180px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+/* Ítems del menú */
+.menu-item {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background-color: transparent;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.menu-item:hover {
+  background-color: #f3f4f6;
+}
+
+.menu-item.cerrar:hover {
+  background-color: #fee2e2;
+}
+
+.menu-item.pedidos:hover {
+  background-color: #dbeafe;
+}
+
+.menu-item.buscar:hover {
+  background-color: #d1fae5;
+}
+
+/* Lista de botones */
+.lista-restaurantes {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+/* Botón individual */
+.boton-restaurante {
+  width: 100%;
+  padding: 12px;
+  background-color: #e5e7eb;
+  color: #111827;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.boton-restaurante:hover {
+  background-color: #d1d5db;
+}
