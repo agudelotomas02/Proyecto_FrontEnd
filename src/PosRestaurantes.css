@@ -1,0 +1,63 @@
+.restaurantes-page {
+  padding: 1rem;
+}
+
+.top-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #0000aa;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.top-header h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.restaurantes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.restaurante-card {
+  display: flex;
+  height: 100px;
+  background-color: #e4e4e4;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.restaurante-card:hover {
+  transform: scale(1.02);
+}
+
+.image-section {
+  flex: 1;
+  max-width: 40%;
+  height: 100%;
+}
+
+.image-section img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.name-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  font-weight: bold;
+  background-color: #dcdcdc;
+  text-align: center;
+}

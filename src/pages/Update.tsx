@@ -14,7 +14,8 @@ const Update = () => {
   const navigate = useNavigate();
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [priceUpdates, setPriceUpdates] = useState<Record<string, number>>({});
+  const [priceUpdates, setPriceUpdates] = useState<Record<string, string>>({});
+  const [stockBase, setStockBase] = useState<Record<string, number>>({});
   const [stockChanges, setStockChanges] = useState<Record<string, number>>({});
   const [filter, setFilter] = useState('');
 
@@ -40,12 +41,15 @@ const Update = () => {
     }));
 
     setProducts(transformed);
+    // Guardar stock base por producto
+    const stockBaseMap: Record<string, number> = {};
+    transformed.forEach(p => { stockBaseMap[p.id] = p.stock });
+    setStockBase(stockBaseMap);
   };
 
   const handlePriceChange = (id: string, value: string) => {
-    const price = parseInt(value, 10);
-    if (!isNaN(price)) {
-      setPriceUpdates(prev => ({ ...prev, [id]: price }));
+    if (/^\d*$/.test(value)) {
+      setPriceUpdates(prev => ({ ...prev, [id]: value }));
     }
   };
 
@@ -56,12 +60,32 @@ const Update = () => {
     }));
   };
 
+  const handleStockEdit = (id: string, value: string) => {
+    if (/^\d*$/.test(value)) {
+      const newBase = parseInt(value || '0', 10);
+      setStockBase(prev => ({ ...prev, [id]: newBase }));
+    }
+  };
+
   const handleUpdate = async (id: string) => {
     const product = products.find(p => p.id === id);
     if (!product) return;
 
-    const updatedPrice = priceUpdates[id] ?? product.price;
-    const updatedStock = product.stock + (stockChanges[id] || 0);
+    const updatedPriceRaw = priceUpdates[id];
+    const updatedPrice = updatedPriceRaw !== undefined
+      ? parseInt(updatedPriceRaw)
+      : product.price;
+
+    if (isNaN(updatedPrice) || updatedPrice <= 0) {
+      alert('El precio debe ser un número mayor a cero.');
+      return;
+    }
+
+    const updatedStock = stockBase[id] + (stockChanges[id] || 0);
+    if (updatedStock < 0) {
+      alert('El stock final no puede ser negativo.');
+      return;
+    }
 
     await fetch(`https://proyecto-backend-zeta.vercel.app/api/inventory/${restaurante}/${id}`, {
       method: 'PUT',
@@ -98,6 +122,25 @@ const Update = () => {
 
   const handleCreateProduct = async () => {
     const { name, price, stock, category } = newProduct;
+
+    if (!name.trim() || !price.trim() || !stock.trim() || !category.trim()) {
+      alert('Todos los campos son obligatorios.');
+      return;
+    }
+
+    const parsedPrice = parseInt(price);
+    const parsedStock = parseInt(stock);
+
+    if (isNaN(parsedPrice) || parsedPrice <= 0) {
+      alert('El precio debe ser un número mayor a cero.');
+      return;
+    }
+
+    if (isNaN(parsedStock) || parsedStock < 0) {
+      alert('El stock debe ser un número entero positivo o cero.');
+      return;
+    }
+
     const id = Date.now().toString();
     await fetch(`https://proyecto-backend-zeta.vercel.app/api/inventory/${restaurante}`, {
       method: 'POST',
@@ -105,8 +148,8 @@ const Update = () => {
       body: JSON.stringify({
         id,
         name,
-        price: parseInt(price),
-        stock: parseInt(stock),
+        price: parsedPrice,
+        stock: parsedStock,
         category,
       }),
     });
@@ -122,7 +165,6 @@ const Update = () => {
 
   return (
     <div className="inventory-page">
-      {/* Header superior */}
       <div className="inventory-header">
         <button onClick={() => navigate(-1)}>←</button>
         <h2>{restaurante}</h2>
@@ -140,7 +182,6 @@ const Update = () => {
         </button>
       </div>
 
-      {/* Barra de navegación */}
       <div className="inventory-controls">
         <button onClick={() => navigate(`/pos/${restaurante}/inventario`)}>Inventario</button>
         <button className="active">Actualizar</button>
@@ -152,9 +193,7 @@ const Update = () => {
         />
       </div>
 
-      {/* Productos + Nuevo producto */}
       <div className="inventory-body">
-        {/* Lista de productos */}
         <div className="products-grid">
           {filteredProducts.map(p => (
             <div key={p.id} className="product-card">
@@ -166,7 +205,22 @@ const Update = () => {
               <div className="stock-row">
                 <div className="stock-box">
                   <div className="label">📦</div>
-                  <div className="value">{p.stock}</div>
+                  <input
+                    className="value"
+                    type="text"
+                    inputMode="numeric"
+                    value={stockBase[p.id]?.toString() ?? p.stock.toString()}
+                    onChange={(e) => handleStockEdit(p.id, e.target.value)}
+                    style={{
+                      width: '50px',
+                      textAlign: 'center',
+                      border: 'none',
+                      outline: 'none',
+                      background: 'white',
+                      fontWeight: 'bold',
+                      fontSize: '1rem',
+                    }}
+                  />
                 </div>
                 <div className="quantity-selector">
                   <button className="decrease" onClick={() => handleStockDelta(p.id, -1)}>-</button>
@@ -178,8 +232,9 @@ const Update = () => {
               <div className="card-footer">
                 <input
                   className="price-display editable"
-                  type="number"
-                  value={priceUpdates[p.id] ?? p.price}
+                  type="text"
+                  inputMode="numeric"
+                  value={priceUpdates[p.id] ?? p.price.toString()}
                   onChange={(e) => handlePriceChange(p.id, e.target.value)}
                 />
                 <div className="action-buttons">
@@ -191,7 +246,6 @@ const Update = () => {
           ))}
         </div>
 
-        {/* Panel lateral: nuevo producto */}
         <div className="cart-sidebar">
           <h3>Nuevo producto</h3>
           <input
@@ -203,14 +257,24 @@ const Update = () => {
           <input
             className="input-field"
             placeholder="Precio"
+            inputMode="numeric"
             value={newProduct.price}
-            onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+            onChange={(e) => {
+              if (/^\d*$/.test(e.target.value)) {
+                setNewProduct({ ...newProduct, price: e.target.value });
+              }
+            }}
           />
           <input
             className="input-field"
             placeholder="Stock"
+            inputMode="numeric"
             value={newProduct.stock}
-            onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })}
+            onChange={(e) => {
+              if (/^\d*$/.test(e.target.value)) {
+                setNewProduct({ ...newProduct, stock: e.target.value });
+              }
+            }}
           />
           <input
             className="input-field"
